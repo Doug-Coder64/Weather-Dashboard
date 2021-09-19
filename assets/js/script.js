@@ -102,10 +102,11 @@ function displayFiveDay(daily) {
 function saveToLocalState(city) {
     const maxSearch = 10;
 
+    // adds items to localStorage 
     if(city){
         for (let i = 0; i < maxSearch; i++) {
-                let x = maxSearch - 1 - i;
-                localStorage.setItem(`${x}`, localStorage.getItem(`${x-1}`));
+            let x = maxSearch - 1 - i;
+            localStorage.setItem(`${x}`, localStorage.getItem(`${x-1}`));
         }
         localStorage.setItem(`0`, city);
     }
@@ -113,8 +114,9 @@ function saveToLocalState(city) {
     let list = $('#history');
     list.empty();
 
+    //pulls from local storage to fill search history
     for(let i = 0; i < maxSearch; i++) {
-        if(localStorage.getItem(`${i}`) != "null") {
+        if(localStorage.getItem(`${i}`) != "null" && localStorage.getItem(`${i}`) != null) {
             let cityEl  = $(`<li id="search-${i}">`).addClass("list-group-item");
             cityEl.click(function(){
                 $(`#searchTerm`).val($(`#search-${i}`).text());
