@@ -1,17 +1,87 @@
 const weatherApiRootUrl = 'https://api.openweathermap.org';
 const weatherApiKey = 'd91f911bcf2c0f925fb6535547a5ddc9';
+const date = new Date();
 
-function displayCurrent(current) {
+function displayCurrent(current, city) {
+
+    let todayEl = $('#today');
+    todayEl.addClass('border border-dark rounded-1')
+
+    //Empty Current Day element
+    todayEl.empty();
+
+    //create header for city name, date and weather Icon
+    let cityHeader = $('<div>').addClass('row');
+
+    //city name and date
+    let cityName = $('<h2 id="cityName">').addClass("col-auto h2 m-2");
+    cityName.text(`${city} (${date.getMonth()}/${date.getDate()}/${date.getFullYear()})`);
     
+    //Pull Weather Icon From API, inject it in URL to display on screen
+    let imageIcon = current.weather[0].icon;
+    let imageIconEl = $('<img class="col-sm-1">').attr('src', `http://openweathermap.org/img/wn/${imageIcon}.png`);
+
+    //Pull Temperature from API and apply it to element
+    let temp = current.temp;
+    let tempEl = $('<div class="m-2">').text(`Temp: ${temp}°`);
+
+    //Pull Wind Speed from API and Apply it to element
+    let wind = current.wind_speed;
+    let windEl = $('<div class="m-2">').text(`Wind: ${wind}MPH`);
+
+    //Pull Humidity from API and Apply it to element
+    let humidity = current.humidity;
+    let humidityEl = $('<div class="m-2">').text(`Humidity ${humidity}%`);
+
+    let uvIndex = current.uvi;
+    let uvIndexContainer = $('<div class="row">');
+    let uvIndexEl = $(`<div class="col-auto m-2">`).text(`UV Index:`);
+    let uvIndexVal = $('<div class="col-auto m-2 rounded-1">').text(uvIndex);
+    
+    //gives favorable, moderate or severe coloring to index number depending on value
+    if(uvIndex < 2){
+        uvIndexVal.addClass("btn-success");
+    }else if (uvIndex < 7) {
+        uvIndexVal.addClass("btn-warning");
+    }else {
+        uvIndexVal.addClass("btn-danger");
+    }
+    
+    cityHeader.append(cityName, imageIconEl);
+    uvIndexContainer.append(uvIndexEl, uvIndexVal);
+    todayEl.append(cityHeader, tempEl, windEl, humidityEl, uvIndexContainer);
 }
 
 function displayFiveDay(daily) {
-
+    
+  
 }
 
 function saveToLocalState(city) {
-    
+    const maxSearch = 10;
 
+    if(city){
+        for (let i = 0; i < maxSearch; i++) {
+                let x = maxSearch - 1 - i;
+                localStorage.setItem(`${x}`, localStorage.getItem(`${x-1}`));
+        }
+        localStorage.setItem(`0`, city);
+    }
+
+    let list = $('#history');
+    list.empty();
+
+    for(let i = 0; i < maxSearch; i++) {
+        if(localStorage.getItem(`${i}`) != "null") {
+            let cityEl  = $(`<li id="search-${i}">`).addClass("list-group-item");
+            cityEl.click(function(){
+                $(`#searchTerm`).val($(`#search-${i}`).text());
+                searchCityWeather();
+            })
+            cityEl.text(localStorage.getItem(`${i}`)); 
+            list.append(cityEl);
+        }
+    }
 }
 
 function searchCityWeather() {
@@ -38,7 +108,7 @@ function searchCityWeather() {
         console.log(body)
         const current = body.current;
         const daily = body.daily;
-        displayCurrent(current);
+        displayCurrent(current, city);
         displayFiveDay(daily);
         saveToLocalState(city);
     })
@@ -46,3 +116,5 @@ function searchCityWeather() {
      console.log(error)
     });
 }
+
+saveToLocalState();
