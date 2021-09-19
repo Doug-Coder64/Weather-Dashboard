@@ -16,7 +16,7 @@ function displayCurrent(current, city) {
 
     //city name and date
     let cityName = $('<h2 id="cityName">').addClass("col-auto h2 m-2");
-    cityName.text(`${city} (${date.getMonth()}/${date.getDate()}/${date.getFullYear()})`);
+    cityName.text(`${city} (${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()})`);
     
     //Pull Weather Icon From API, inject it in URL to display on screen
     let imageIcon = current.weather[0].icon;
@@ -59,20 +59,20 @@ function displayFiveDay(daily) {
     
     //Empty Current Day element
     forecastEl.empty();
-    forecastEl.addClass("container");
+    forecastEl.addClass();
     
     //city name and date
-    let fiveHeader = $('<h2 id="fiveHeader">').addClass("h2");
+    let fiveHeader = $('<h2 id="fiveHeader">').addClass("h2 mt-4");
     fiveHeader.text(`5-Day Forecast:`);
     
     forecastEl.append(fiveHeader);
 
-    let fiveForecast = $('<div class="row justify-content-between">');
+    let fiveForecast = $('<div class="row justify-content-between m-1 mt-4">');
     for (let i = 0; i < 5; i++) {
         let date = new Date(daily[i].dt * 1000);
 
-        let dateEl = $('<h5 id="cityName">').addClass("col-auto h5 m-2");
-        dateEl.text(`${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`);
+        let dateEl = $('<h5 id="dateEl">').addClass("col-auto h5 m-2");
+        dateEl.text(`${date.getMonth()+1}/${date.getDate()}/${date.getFullYear()}`);
         
         let imageIcon = daily[i].weather[0].icon;
         let imageIconEl = $('<img>').attr('src', `http://openweathermap.org/img/wn/${imageIcon}.png`);
