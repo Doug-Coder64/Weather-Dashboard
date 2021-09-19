@@ -1,11 +1,12 @@
 const weatherApiRootUrl = 'https://api.openweathermap.org';
 const weatherApiKey = 'd91f911bcf2c0f925fb6535547a5ddc9';
-const date = new Date();
 
 function displayCurrent(current, city) {
 
     let todayEl = $('#today');
     todayEl.addClass('border border-dark rounded-1')
+
+    let date = new Date(current.dt * 1000);
 
     //Empty Current Day element
     todayEl.empty();
@@ -54,7 +55,48 @@ function displayCurrent(current, city) {
 
 function displayFiveDay(daily) {
     
-  
+    let forecastEl = $('#forecast');
+    
+    //Empty Current Day element
+    forecastEl.empty();
+    forecastEl.addClass("container");
+    
+    //city name and date
+    let fiveHeader = $('<h2 id="fiveHeader">').addClass("h2");
+    fiveHeader.text(`5-Day Forecast:`);
+    
+    forecastEl.append(fiveHeader);
+
+    let fiveForecast = $('<div class="row justify-content-between">');
+    for (let i = 0; i < 5; i++) {
+        let date = new Date(daily[i].dt * 1000);
+
+        let dateEl = $('<h5 id="cityName">').addClass("col-auto h5 m-2");
+        dateEl.text(`${date.getMonth()}/${date.getDate()}/${date.getFullYear()}`);
+        
+        let imageIcon = daily[i].weather[0].icon;
+        let imageIconEl = $('<img>').attr('src', `http://openweathermap.org/img/wn/${imageIcon}.png`);
+
+        //Pull Temperature from API and apply it to element
+        let temp = daily[i].temp.day;
+        let tempEl = $('<div class="m-2">').text(`Temp: ${temp}°`);
+
+        //Pull Wind Speed from API and Apply it to element
+        let wind = daily[i].wind_speed;
+        let windEl = $('<div class="m-2">').text(`Wind: ${wind}MPH`);
+
+        //Pull Humidity from API and Apply it to element
+        let humidity = daily[i].humidity;
+        let humidityEl = $('<div class="m-2">').text(`Humidity ${humidity}%`);
+
+        let dailyForecast = $(`<div class="col-2 bg-secondary rounded-1">`);
+
+        dailyForecast.append(dateEl, imageIconEl, tempEl, windEl, humidityEl);
+    
+        fiveForecast.append(dailyForecast);
+    }
+
+    forecastEl.append(fiveForecast);
 }
 
 function saveToLocalState(city) {
